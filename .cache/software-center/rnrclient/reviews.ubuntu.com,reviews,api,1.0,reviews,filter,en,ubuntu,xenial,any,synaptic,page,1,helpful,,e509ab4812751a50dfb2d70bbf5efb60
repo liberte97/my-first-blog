@@ -1,0 +1,110 @@
+status: 200
+content-length: 4201
+expires: Thu, 06 Jul 2017 15:28:03 GMT
+content-location: https://reviews.ubuntu.com/reviews/api/1.0/reviews/filter/en/ubuntu/xenial/any/synaptic/page/1/helpful/
+strict-transport-security: max-age=15768000; includeSubDomains; preload
+vary: Accept
+server: gunicorn/19.3.0
+last-modified: Thu, 06 Jul 2017 15:23:03 GMT
+x-bzr-revision-number: 322
+cache-control: max-age=300
+date: Thu, 06 Jul 2017 15:23:03 GMT
+content-type: application/json; charset=utf-8
+
+[
+    {
+        "origin": "ubuntu", 
+        "rating": 5, 
+        "hide": false, 
+        "app_name": "", 
+        "language": "en", 
+        "reviewer_username": "skFbPXk", 
+        "usefulness_total": 13, 
+        "usefulness_favorable": 13, 
+        "review_text": "Ubuntu users, if you want to ADD or REMOVE any app, this is essential because this app enables you to go into details before doing these two actions.", 
+        "date_deleted": null, 
+        "summary": "Essential", 
+        "version": "0.83", 
+        "id": 100696, 
+        "date_created": "2016-04-23 05:37:17", 
+        "reviewer_displayname": "Madhusoodanan", 
+        "package_name": "synaptic", 
+        "distroseries": "xenial"
+    }, 
+    {
+        "origin": "ubuntu", 
+        "rating": 5, 
+        "hide": false, 
+        "app_name": "", 
+        "language": "en", 
+        "reviewer_username": "WJTEPFE", 
+        "usefulness_total": 6, 
+        "usefulness_favorable": 6, 
+        "review_text": "With the new 16.04 release and the adoption of GNOME software instead of the Ubuntu Software Center, this tool is not just good, it's necessary. I know my way around apt-get and apt-cache, but that doesn't matter so much if you're looking to browse software packages. It's easier to read. The fact that the Ubuntu Software center could browse these packages made it OK to stop including it, but now it needs to come back by default.", 
+        "date_deleted": null, 
+        "summary": "I wish Ubuntu Software could still do this stuff...", 
+        "version": "0.83", 
+        "id": 103220, 
+        "date_created": "2016-08-13 18:14:17", 
+        "reviewer_displayname": "Jim Read", 
+        "package_name": "synaptic", 
+        "distroseries": "xenial"
+    }, 
+    {
+        "origin": "ubuntu", 
+        "rating": 5, 
+        "hide": false, 
+        "app_name": "", 
+        "language": "en", 
+        "reviewer_username": "Yk6Jdpr", 
+        "usefulness_total": 4, 
+        "usefulness_favorable": 4, 
+        "review_text": "Awesome tool for installing specific packages", 
+        "date_deleted": null, 
+        "summary": "Must hasve", 
+        "version": "0.83", 
+        "id": 101786, 
+        "date_created": "2016-05-22 13:11:19", 
+        "reviewer_displayname": "Abilash", 
+        "package_name": "synaptic", 
+        "distroseries": "xenial"
+    }, 
+    {
+        "origin": "ubuntu", 
+        "rating": 5, 
+        "hide": false, 
+        "app_name": "", 
+        "language": "en", 
+        "reviewer_username": "XPzQnMd", 
+        "usefulness_total": 3, 
+        "usefulness_favorable": 3, 
+        "review_text": "I have been using Synaptic ever since I started using Ubuntu (2011) and while I kept upgrading to newer distros of Ubuntu, synaptic has always been a great friend to update/ add new software packages with ease! \n\nWould totally recommend this especially for those who love a bit of GUI for app installation/ mangement.", 
+        "date_deleted": null, 
+        "summary": "Reliable, User friendly", 
+        "version": "0.83", 
+        "id": 101345, 
+        "date_created": "2016-05-10 10:03:28", 
+        "reviewer_displayname": "Sivam", 
+        "package_name": "synaptic", 
+        "distroseries": "xenial"
+    }, 
+    {
+        "origin": "ubuntu", 
+        "rating": 5, 
+        "hide": false, 
+        "app_name": "", 
+        "language": "en", 
+        "reviewer_username": "DTyn4JK", 
+        "usefulness_total": 0, 
+        "usefulness_favorable": 0, 
+        "review_text": "If there's perfect software on the planet, Synaptic might be on the short list of candidates. It has served me well on dozens of systems, from 256MB clunkers to blazing fast modern desktops. It is the first package I install on any Debian-based system. If you have lots of packages to install, don't know what you're looking for, or just want to look for something interesting, this is the program for you.", 
+        "date_deleted": null, 
+        "summary": "Must Have", 
+        "version": "0.83", 
+        "id": 102987, 
+        "date_created": "2016-07-04 19:50:01", 
+        "reviewer_displayname": "Jason C. McDonald", 
+        "package_name": "synaptic", 
+        "distroseries": "xenial"
+    }
+]

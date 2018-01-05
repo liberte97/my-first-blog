@@ -1,0 +1,38 @@
+status: 200
+content-length: 554
+expires: Thu, 06 Jul 2017 19:16:12 GMT
+content-location: https://reviews.ubuntu.com/reviews/api/1.0/review-stats/any/any/updates-last-1-days/
+strict-transport-security: max-age=15768000; includeSubDomains; preload
+vary: Accept,Accept-Encoding
+server: gunicorn/19.3.0
+last-modified: Thu, 06 Jul 2017 15:16:12 GMT
+-content-encoding: gzip
+x-bzr-revision-number: 322
+cache-control: max-age=14400
+date: Thu, 06 Jul 2017 15:19:22 GMT
+content-type: application/json; charset=utf-8
+-varied-accept-encoding: gzip, deflate
+
+[
+    {
+        "ratings_total": 641, 
+        "ratings_average": "2.36", 
+        "app_name": "", 
+        "package_name": "brasero", 
+        "histogram": "[322, 73, 57, 71, 118]"
+    }, 
+    {
+        "ratings_total": 67, 
+        "ratings_average": "4.34", 
+        "app_name": "", 
+        "package_name": "anki", 
+        "histogram": "[6, 3, 0, 11, 47]"
+    }, 
+    {
+        "ratings_total": 2191, 
+        "ratings_average": "4.76", 
+        "app_name": "", 
+        "package_name": "vlc", 
+        "histogram": "[46, 23, 54, 165, 1903]"
+    }
+]

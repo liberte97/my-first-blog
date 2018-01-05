@@ -1,0 +1,24 @@
+2017-07-07 00:18:47,021 - softwarecenter.backend.zeitgeist_logger - WARNING - Support for Zeitgeist disabled
+2017-07-07 00:18:47,153 - softwarecenter.ui.gtk3.app - INFO - setting up proxy 'None'
+2017-07-07 00:18:50,332 - softwarecenter.region - WARNING - failed to use geoclue: 'org.freedesktop.Geoclue.Error.notAvailable: Geoclue master client has no usable Address providers'
+2017-07-07 00:18:50,600 - softwarecenter.backend.reviews - WARNING - Could not get usefulness from server, no username in config file
+2017-07-07 00:18:50,632 - softwarecenter.plugin - INFO - activating plugin '<module 'webapps_activation' from '/usr/share/software-center/softwarecenter/plugins/webapps_activation.pyc'>'
+2017-07-07 00:18:50,821 - softwarecenter.db.pkginfo_impl.aptcache - INFO - aptcache.open()
+2017-07-07 00:18:53,048 - softwarecenter.db.update - WARNING - failed to load file /var/lib/apt-xapian-index/cataloged_times.p: unsupported pickle protocol: 3
+2017-07-07 00:18:57,490 - softwarecenter.db.update - WARNING - failed to load file /var/lib/apt-xapian-index/cataloged_times.p: unsupported pickle protocol: 3
+2017-07-07 00:19:05,644 - softwarecenter.db.utils - INFO - software-center-agent finished with status 0
+2017-07-07 00:19:19,980 - softwarecenter.backend.zeitgeist_logger - WARNING - Support for Zeitgeist disabled
+2017-07-07 00:19:20,044 - softwarecenter.ui.gtk3.app - INFO - setting up proxy 'None'
+2017-07-07 00:19:20,826 - softwarecenter.backend.reviews - WARNING - Could not get usefulness from server, no username in config file
+2017-07-07 00:19:20,864 - softwarecenter.plugin - INFO - activating plugin '<module 'webapps_activation' from '/usr/share/software-center/softwarecenter/plugins/webapps_activation.pyc'>'
+2017-07-07 00:19:20,953 - softwarecenter.db.pkginfo_impl.aptcache - INFO - aptcache.open()
+2017-07-07 00:19:21,705 - softwarecenter.db.update - WARNING - failed to load file /var/lib/apt-xapian-index/cataloged_times.p: unsupported pickle protocol: 3
+2017-07-07 00:19:24,063 - softwarecenter.db.update - WARNING - failed to load file /var/lib/apt-xapian-index/cataloged_times.p: unsupported pickle protocol: 3
+2017-07-07 00:19:26,679 - softwarecenter.db.utils - INFO - software-center-agent finished with status 0
+2017-07-07 00:19:45,907 - softwarecenter.backend.unitylauncher - WARNING - could not send dbus signal to the Unity launcher: (org.freedesktop.DBus.Error.UnknownMethod: No such method 'AddLauncherItemFromPosition')
+2017-07-07 00:20:21,150 - softwarecenter.ui.gtk3.panes.pendingpane - WARNING - transaction cancel failed: org.debian.apt: Could not cancel transaction
+2017-07-07 00:23:02,762 - softwarecenter.backend.unitylauncher - WARNING - could not send dbus signal to the Unity launcher: (org.freedesktop.DBus.Error.UnknownMethod: No such method 'AddLauncherItemFromPosition')
+2017-07-07 00:23:32,113 - softwarecenter.db.pkginfo_impl.aptcache - INFO - aptcache.open()
+2017-07-07 00:23:32,753 - softwarecenter.backend.zeitgeist_logger - WARNING - No zeitgeist support, impossible to log event
+2017-07-07 00:24:12,279 - softwarecenter.db.update - WARNING - failed to load file /var/lib/apt-xapian-index/cataloged_times.p: unsupported pickle protocol: 3
+2017-07-07 00:36:15,852 - softwarecenter.db.update - WARNING - failed to load file /var/lib/apt-xapian-index/cataloged_times.p: unsupported pickle protocol: 3

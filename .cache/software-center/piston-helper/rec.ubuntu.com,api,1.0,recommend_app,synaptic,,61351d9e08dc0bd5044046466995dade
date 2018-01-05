@@ -1,0 +1,343 @@
+status: 200
+content-length: 8381
+via: 1.1 sumac.canonical.com:3128 (squid/2.7.STABLE7)
+content-location: https://rec.ubuntu.com/api/1.0/recommend_app/synaptic/
+x-cache: HIT from sumac.canonical.com
+age: 243
+expires: Thu, 06 Jul 2017 15:23:59 GMT
+server: Apache
+last-modified: Thu, 06 Jul 2017 15:18:59 GMT
+etag: "e57fa3a9a23905958877182de04e27ad"
+strict-transport-security: max-age=2592000
+cache-control: max-age=300
+date: Thu, 06 Jul 2017 15:18:59 GMT
+content-type: application/json; charset=utf-8
+x-cache-lookup: HIT from sumac.canonical.com:3128
+
+{
+    "rid": "d41cd3e35ce9aa61ff1c07471d0bd91b", 
+    "data": [
+        {
+            "lift": 2.03998345204006, 
+            "package_name": "alacarte", 
+            "similarity": 1.0064
+        }, 
+        {
+            "lift": 1.68679732389823, 
+            "package_name": "gimp", 
+            "similarity": 0.9091
+        }, 
+        {
+            "lift": 1.21309219456972, 
+            "package_name": "gstreamer0.10-plugins-bad", 
+            "similarity": 0.8557
+        }, 
+        {
+            "lift": 1.20163057146975, 
+            "package_name": "gstreamer0.10-ffmpeg", 
+            "similarity": 0.8458
+        }, 
+        {
+            "lift": 1.20363308522117, 
+            "package_name": "gstreamer0.10-plugins-ugly", 
+            "similarity": 0.8456
+        }, 
+        {
+            "lift": 1.76955342490889, 
+            "package_name": "mono-runtime", 
+            "similarity": 0.8031
+        }, 
+        {
+            "lift": 1.69725953890439, 
+            "package_name": "gstreamer0.10-plugins-bad-multiverse", 
+            "similarity": 0.7734
+        }, 
+        {
+            "lift": 1.33879668957369, 
+            "package_name": "vlc", 
+            "similarity": 0.7669
+        }, 
+        {
+            "lift": 1.61268309580332, 
+            "package_name": "p7zip-full", 
+            "similarity": 0.734
+        }, 
+        {
+            "lift": 1.33625931870094, 
+            "package_name": "metacity", 
+            "similarity": 0.7253
+        }, 
+        {
+            "lift": 1.60082280639979, 
+            "package_name": "kdelibs5-data", 
+            "similarity": 0.6959
+        }, 
+        {
+            "package_name": "software-center", 
+            "similarity": 0.6943
+        }, 
+        {
+            "package_name": "software-properties-gtk", 
+            "similarity": 0.6941
+        }, 
+        {
+            "lift": 1.61457014857318, 
+            "package_name": "icedtea-netx-common", 
+            "similarity": 0.6928
+        }, 
+        {
+            "package_name": "gucharmap", 
+            "similarity": 0.6907
+        }, 
+        {
+            "package_name": "update-manager", 
+            "similarity": 0.6897
+        }, 
+        {
+            "package_name": "file-roller", 
+            "similarity": 0.6893
+        }, 
+        {
+            "package_name": "yelp", 
+            "similarity": 0.6888
+        }, 
+        {
+            "package_name": "network-manager-gnome", 
+            "similarity": 0.6887
+        }, 
+        {
+            "package_name": "system-config-printer-gnome", 
+            "similarity": 0.6883
+        }, 
+        {
+            "lift": 1.69995661465995, 
+            "package_name": "ubuntu-restricted-extras", 
+            "similarity": 0.6875
+        }, 
+        {
+            "package_name": "xterm", 
+            "similarity": 0.6869
+        }, 
+        {
+            "lift": 1.0753098776183, 
+            "package_name": "gcalctool", 
+            "similarity": 0.6856
+        }, 
+        {
+            "package_name": "language-selector-gnome", 
+            "similarity": 0.6856
+        }, 
+        {
+            "package_name": "evince", 
+            "similarity": 0.682
+        }, 
+        {
+            "package_name": "ibus", 
+            "similarity": 0.6799
+        }, 
+        {
+            "lift": 1.59922922420385, 
+            "package_name": "kde-runtime", 
+            "similarity": 0.6781
+        }, 
+        {
+            "package_name": "simple-scan", 
+            "similarity": 0.6746
+        }, 
+        {
+            "package_name": "xul-ext-ubufox", 
+            "similarity": 0.6706
+        }, 
+        {
+            "package_name": "firefox", 
+            "similarity": 0.6684
+        }, 
+        {
+            "lift": 1.29737333207638, 
+            "package_name": "gnome-nettool", 
+            "similarity": 0.665
+        }, 
+        {
+            "package_name": "usb-creator-gtk", 
+            "similarity": 0.6609
+        }, 
+        {
+            "package_name": "gedit", 
+            "similarity": 0.6485
+        }, 
+        {
+            "package_name": "libreoffice-writer", 
+            "similarity": 0.6477
+        }, 
+        {
+            "package_name": "brasero", 
+            "similarity": 0.6466
+        }, 
+        {
+            "package_name": "libreoffice-math", 
+            "similarity": 0.6445
+        }, 
+        {
+            "package_name": "apturl", 
+            "similarity": 0.6441
+        }, 
+        {
+            "package_name": "libreoffice-calc", 
+            "similarity": 0.6437
+        }, 
+        {
+            "package_name": "libreoffice-draw", 
+            "similarity": 0.6429
+        }, 
+        {
+            "package_name": "libreoffice-impress", 
+            "similarity": 0.6415
+        }, 
+        {
+            "rating": 4.0, 
+            "lift": 1.08437647830325, 
+            "package_name": "flashplugin-installer", 
+            "similarity": 0.6391
+        }, 
+        {
+            "package_name": "compiz-core", 
+            "similarity": 0.6384
+        }, 
+        {
+            "package_name": "gnome-disk-utility", 
+            "similarity": 0.6374
+        }, 
+        {
+            "package_name": "transmission-gtk", 
+            "similarity": 0.6346
+        }, 
+        {
+            "package_name": "onboard", 
+            "similarity": 0.632
+        }, 
+        {
+            "lift": 1.14386012247737, 
+            "package_name": "gnome-media", 
+            "similarity": 0.6309
+        }, 
+        {
+            "package_name": "gnome-terminal", 
+            "similarity": 0.6272
+        }, 
+        {
+            "package_name": "seahorse", 
+            "similarity": 0.6261
+        }, 
+        {
+            "lift": 1.02693509032354, 
+            "package_name": "shotwell", 
+            "similarity": 0.6247
+        }, 
+        {
+            "package_name": "gnome-power-manager", 
+            "similarity": 0.6229
+        }, 
+        {
+            "lift": 1.66164729249338, 
+            "package_name": "gparted"
+        }, 
+        {
+            "lift": 1.64821683576346, 
+            "package_name": "kde-runtime-data"
+        }, 
+        {
+            "lift": 1.44337243279441, 
+            "package_name": "openjdk-7-jre"
+        }, 
+        {
+            "lift": 1.42699165375079, 
+            "package_name": "imagemagick"
+        }, 
+        {
+            "lift": 1.29625522006682, 
+            "package_name": "chromium-browser"
+        }, 
+        {
+            "rating": 3.0, 
+            "lift": 1.21620943587081, 
+            "package_name": "unity-2d"
+        }, 
+        {
+            "lift": 1.2111227556536, 
+            "package_name": "gnome-keyring"
+        }, 
+        {
+            "lift": 1.20712305962973, 
+            "package_name": "jockey-gtk"
+        }, 
+        {
+            "lift": 1.08032489148921, 
+            "package_name": "im-switch"
+        }, 
+        {
+            "lift": 1.028162559159, 
+            "package_name": "gnomine"
+        }, 
+        {
+            "lift": 1.01123161661283, 
+            "package_name": "remmina-common"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "photoprint"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "telepathy-sofiasip"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "fglrx"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "transmageddon"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "acm"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "pitivi"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "kdenlive"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "billard-gl"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "freeguide"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "gnome-photo-printer"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "lubuntu-desktop"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "mixxx"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "stackapplet"
+        }, 
+        {
+            "rating": 3.0, 
+            "package_name": "gnome-shell"
+        }
+    ], 
+    "app": "synaptic"
+}

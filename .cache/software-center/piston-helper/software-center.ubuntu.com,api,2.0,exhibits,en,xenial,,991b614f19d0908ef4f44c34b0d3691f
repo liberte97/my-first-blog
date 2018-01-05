@@ -1,0 +1,21 @@
+status: 200
+x-request-id: WV5U4goZOCUAAGWNh@oAAAAj1
+via: 1.1 juju-prod45-u1-sca-machine-26 (squid/3.3.8)
+x-cache: HIT from juju-prod45-u1-sca-machine-26
+content-language: en
+age: 317
+expires: Thu, 06 Jul 2017 15:23:41 GMT
+vary: Authorization,Accept-Language,Cookie
+server: gunicorn/19.6.0
+last-modified: Thu, 06 Jul 2017 15:13:41 GMT
+x-vcs-revision: 13.2
+etag: "d751713988987e9331980363e24189ce"
+strict-transport-security: max-age=2592000
+cache-control: max-age=600
+date: Thu, 06 Jul 2017 15:13:41 GMT
+x-bzr-revision-number: 4023
+content-type: application/json; charset=utf-8
+x-cache-lookup: HIT from juju-prod45-u1-sca-machine-26:3128
+content-location: https://software-center.ubuntu.com/api/2.0/exhibits/en/xenial/
+
+[]

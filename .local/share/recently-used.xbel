@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbel version="1.0"
+      xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+      xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+>
+  <bookmark href="file:///media/ann/VMware%20Tools/VMwareTools-10.1.6-5214329.tar.gz" added="2017-07-04T15:30:36Z" modified="2017-07-06T07:50:15Z" visited="2017-07-04T15:30:36Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-compressed-tar"/>
+        <bookmark:applications>
+          <bookmark:application name="nautilus" exec="&apos;file-roller %U&apos;" modified="2017-07-06T07:50:14Z" count="3"/>
+          <bookmark:application name="File Roller" exec="&apos;file-roller&apos;" modified="2017-07-06T07:50:15Z" count="2"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="archive://file%253A%252F%252F%252Fmedia%252Fann%252FVMware%252520Tools%252FVMwareTools-10.1.6-5214329.tar.gz/vmware-tools-distrib/vmware-install.pl" added="2017-07-06T07:43:55Z" modified="2017-07-06T07:45:51Z" visited="2017-07-06T07:43:56Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-perl"/>
+        <bookmark:groups>
+          <bookmark:group>gedit</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="nautilus" exec="&apos;gedit %U&apos;" modified="2017-07-06T07:45:49Z" count="2"/>
+          <bookmark:application name="gedit" exec="&apos;gedit %u&apos;" modified="2017-07-06T07:45:51Z" count="2"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="archive://file%253A%252F%252F%252Fmedia%252Fann%252FVMware%252520Tools%252FVMwareTools-10.1.6-5214329.tar.gz/vmware-tools-distrib/INSTALL" added="2017-07-06T07:46:06Z" modified="2017-07-06T07:46:07Z" visited="2017-07-06T07:46:07Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="text/x-install"/>
+        <bookmark:groups>
+          <bookmark:group>gedit</bookmark:group>
+        </bookmark:groups>
+        <bookmark:applications>
+          <bookmark:application name="nautilus" exec="&apos;gedit %U&apos;" modified="2017-07-06T07:46:06Z" count="1"/>
+          <bookmark:application name="gedit" exec="&apos;gedit %u&apos;" modified="2017-07-06T07:46:07Z" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="file:///home/ann/Desktop/QR/pyqrcode%0D" added="2017-07-21T02:53:45Z" modified="2017-07-21T02:53:47Z" visited="2017-07-21T02:53:45Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/octet-stream"/>
+        <bookmark:applications>
+          <bookmark:application name="nautilus" exec="&apos;evince %U&apos;" modified="2017-07-21T02:53:45Z" count="1"/>
+          <bookmark:application name="Document Viewer" exec="&apos;evince %u&apos;" modified="2017-07-21T02:53:47Z" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="file:///home/ann/Desktop/sguil-0.9.0.tar.gz" added="2017-07-31T02:53:37Z" modified="2017-07-31T02:53:47Z" visited="2017-07-31T02:53:37Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="application/x-compressed-tar"/>
+        <bookmark:applications>
+          <bookmark:application name="nautilus" exec="&apos;file-roller %U&apos;" modified="2017-07-31T02:53:37Z" count="1"/>
+          <bookmark:application name="File Roller" exec="&apos;file-roller&apos;" modified="2017-07-31T02:53:47Z" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="file:///home/ann/Desktop" added="2017-07-31T02:54:03Z" modified="2017-07-31T02:54:03Z" visited="2017-07-31T02:54:04Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="inode/directory"/>
+        <bookmark:applications>
+          <bookmark:application name="Archive Manager" exec="&apos;file-roller %u&apos;" modified="2017-07-31T02:54:03Z" count="1"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+</xbel>

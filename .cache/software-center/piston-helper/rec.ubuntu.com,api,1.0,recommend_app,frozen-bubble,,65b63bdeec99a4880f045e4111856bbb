@@ -1,0 +1,461 @@
+status: 200
+content-length: 10306
+via: 1.1 sumac.canonical.com:3128 (squid/2.7.STABLE7)
+content-location: https://rec.ubuntu.com/api/1.0/recommend_app/frozen-bubble/
+x-cache: MISS from sumac.canonical.com
+x-cache-lookup: HIT from sumac.canonical.com:3128
+expires: Thu, 06 Jul 2017 15:24:45 GMT
+server: Apache
+last-modified: Thu, 06 Jul 2017 15:19:45 GMT
+etag: "077d06c1da527cfc0f579d8c0472e7b0"
+strict-transport-security: max-age=2592000
+cache-control: max-age=300
+date: Thu, 06 Jul 2017 15:19:44 GMT
+content-type: application/json; charset=utf-8
+
+{
+    "rid": "da7253a96054b909040882918b360317", 
+    "data": [
+        {
+            "package_name": "supertux", 
+            "similarity": 0.2024
+        }, 
+        {
+            "package_name": "pingus", 
+            "similarity": 0.1628
+        }, 
+        {
+            "package_name": "neverball", 
+            "similarity": 0.1613
+        }, 
+        {
+            "package_name": "supertuxkart", 
+            "similarity": 0.1536
+        }, 
+        {
+            "package_name": "extremetuxracer", 
+            "similarity": 0.138
+        }, 
+        {
+            "package_name": "hedgewars", 
+            "similarity": 0.1227
+        }, 
+        {
+            "package_name": "neverputt", 
+            "similarity": 0.1125
+        }, 
+        {
+            "package_name": "supertux-stable", 
+            "similarity": 0.1043
+        }, 
+        {
+            "package_name": "nexuiz", 
+            "similarity": 0.1039
+        }, 
+        {
+            "package_name": "warmux", 
+            "similarity": 0.0976
+        }, 
+        {
+            "package_name": "teeworlds", 
+            "similarity": 0.0949
+        }, 
+        {
+            "package_name": "gweled", 
+            "similarity": 0.0908
+        }, 
+        {
+            "package_name": "tuxpaint", 
+            "similarity": 0.0906
+        }, 
+        {
+            "package_name": "openarena", 
+            "similarity": 0.0896
+        }, 
+        {
+            "package_name": "frogatto", 
+            "similarity": 0.0889
+        }, 
+        {
+            "package_name": "armagetronad", 
+            "similarity": 0.0888
+        }, 
+        {
+            "package_name": "chromium-bsu", 
+            "similarity": 0.0844
+        }, 
+        {
+            "package_name": "warzone2100", 
+            "similarity": 0.0834
+        }, 
+        {
+            "package_name": "xmoto", 
+            "similarity": 0.0789
+        }, 
+        {
+            "package_name": "wesnoth-1.10", 
+            "similarity": 0.0746
+        }, 
+        {
+            "package_name": "pokerth", 
+            "similarity": 0.0745
+        }, 
+        {
+            "package_name": "scribus", 
+            "similarity": 0.0744
+        }, 
+        {
+            "package_name": "fretsonfire", 
+            "similarity": 0.0741
+        }, 
+        {
+            "package_name": "gcompris", 
+            "similarity": 0.0728
+        }, 
+        {
+            "package_name": "billard-gl", 
+            "similarity": 0.072
+        }, 
+        {
+            "package_name": "xine-ui", 
+            "similarity": 0.0704
+        }, 
+        {
+            "package_name": "celestia-gnome", 
+            "similarity": 0.0687
+        }, 
+        {
+            "package_name": "gbrainy", 
+            "similarity": 0.0684
+        }, 
+        {
+            "package_name": "homebank", 
+            "similarity": 0.0673
+        }, 
+        {
+            "package_name": "tuxmath", 
+            "similarity": 0.067
+        }, 
+        {
+            "package_name": "torcs", 
+            "similarity": 0.0664
+        }, 
+        {
+            "package_name": "arista", 
+            "similarity": 0.0661
+        }, 
+        {
+            "package_name": "openshot", 
+            "similarity": 0.0658
+        }, 
+        {
+            "package_name": "stellarium", 
+            "similarity": 0.0646
+        }, 
+        {
+            "package_name": "libreoffice-base", 
+            "similarity": 0.0644
+        }, 
+        {
+            "package_name": "calibre", 
+            "similarity": 0.0641
+        }, 
+        {
+            "package_name": "blender", 
+            "similarity": 0.0635
+        }, 
+        {
+            "package_name": "openttd", 
+            "similarity": 0.0632
+        }, 
+        {
+            "package_name": "sgt-puzzles", 
+            "similarity": 0.0631
+        }, 
+        {
+            "package_name": "avidemux", 
+            "similarity": 0.0628
+        }, 
+        {
+            "package_name": "acidrip", 
+            "similarity": 0.0625
+        }, 
+        {
+            "package_name": "miro", 
+            "similarity": 0.0623
+        }, 
+        {
+            "package_name": "dosbox", 
+            "similarity": 0.0618
+        }, 
+        {
+            "package_name": "sauerbraten", 
+            "similarity": 0.0615
+        }, 
+        {
+            "package_name": "kmahjongg", 
+            "similarity": 0.061
+        }, 
+        {
+            "package_name": "freeciv-client-gtk", 
+            "similarity": 0.0608
+        }, 
+        {
+            "package_name": "libreoffice", 
+            "similarity": 0.0602
+        }, 
+        {
+            "package_name": "pitivi", 
+            "similarity": 0.0601
+        }, 
+        {
+            "package_name": "pdfmod", 
+            "similarity": 0.0601
+        }, 
+        {
+            "package_name": "ktuberling", 
+            "similarity": 0.06
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "xbill"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "luola"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gnobots2"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "xscavenger"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "fofix"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "flobopuyo"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "passage"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "criticalmass"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "pornview"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "amor"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "w3af"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "tennix"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "xscorch"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "noiz2sa"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "xboing"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "egoboo"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "ttf-indic-fonts-core"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "balazar"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "linthesia"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "bugsx"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "barrage"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "chocolate-doom"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "stella"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "bygfoot"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "kbounce"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "audex"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "mmpong-gl"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "dopewars"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "pyscrabble"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "powder"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "zatacka"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "fceux"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "crawl-tiles"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "tictactoe-ng"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gemdropx"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gnome-gmail"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gravitation"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "oneisenough"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "slingshot"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "amphetamine"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "freedroid"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "monster-masher"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "triplane"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "rlvm"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gnibbles"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "exult"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "xqf"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "snake4"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "acm"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "stepbill.app"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gargoyle-free"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "fuse-emulator-sdl"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gomoku.app"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "netrek-client-cow"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "asciijump"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "heroes-sdl"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "lmarbles"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "gnomekiss"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "yabause-gtk"
+        }, 
+        {
+            "rating": 4.0, 
+            "package_name": "kanadic"
+        }
+    ], 
+    "app": "frozen-bubble"
+}

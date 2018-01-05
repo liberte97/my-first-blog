@@ -1,0 +1,891 @@
+#!/bin/sh
+# Run tcl from users PATH \
+exec tclsh "$0" "$@"
+
+# $Id: sguild,v 1.194 2013/09/05 00:38:45 bamm Exp $ #
+
+# Copyright (C) 2002-2013 Robert (Bamm) Visscher <bamm@sguil.net>
+#
+# This program is distributed under the terms of version 3 of the 
+# GNU Public License.  See LICENSE for further details.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+########################## GLOBALS ##################################
+
+set VERSION "SGUIL-0.9.0"
+set AGENT_VERSION "SGUIL-0.9.0"
+# DB Version
+set DB_VERSION "0.14"
+# Counter for tracking xscript transactions
+set NEXT_TRANS_ID 0
+
+# Config options moved to sguild.conf
+
+######################## END GLOBALS ################################
+
+########################## PROCS ####################################
+
+proc DisplayUsage { cmdName } {
+  puts "Usage: $cmdName \[-D\] \[-h\] \[-c <filename>\] \[-P <filename>\]"
+  puts "         \[-O <filename>\] \[-C <directory\]"
+  puts "       $cmdName \[-u <filename\] \[-adduser <username>\] \[-changepasswd <username>\]"
+  puts "  -c <filename>: PATH to the sguild config (sguild.conf) file."
+  puts "  -a <filename>: PATH to the autocat config (autocat.conf) file."
+  puts "  -g <filename>: PATH to the sguild global queries (sguild.queries) file."
+  puts "  -P <filename>: Name of file to write the PID to."
+  puts "                 Default is /var/run/sguild.pid"
+  puts "  -l <filepath>: PATH to sguild libraries."
+  puts "  -O <filename>: Define PATH to tls (tcl openssl) lib (libtls1.x.so)"
+  puts "  -C <directory>: Directory that contains sguild.pem and sguild.key"
+  puts "  -D Runs sguild in daemon mode."
+  puts "  -adduser <username>: Add user to sguild."
+  puts "  -changepasswd <username>: Change user's password."
+  puts "  -disableuser <username>: Change user's account."
+  puts "  -A <filename>: PATH to sguild.access file."
+  puts "  -d <0|1|2>: Set DEBUG level"
+  puts "  -h Display this help"
+  CleanExit
+}
+
+# This catches any errors that aren't caught by catch.
+proc bgerror { errorMsg } {
+
+    global errorInfo
+
+    # Catch SSL errors and close the appropriate channel.
+    # Else write the error and CleanExit
+    if { [regexp {^SSL channel "(.*)":} $errorMsg match socketID] } { 
+
+        LogMessage "Error from socket $socketID: $errorMsg"
+        LogMessage "Closing socket."
+        catch {close $socketID} closeError
+        CleanUpDisconnectedAgent $socketID
+
+    } else {
+
+        puts "Error: $errorMsg"
+        if { [info exists errorInfo] } { puts $errorInfo }
+        CleanExit 1
+
+    }
+
+}
+
+proc CleanExit { { error {0} } } {
+  global PID_FILE FORKD_PIDS MAIN_DB_SOCKETID
+
+    catch {mysqlclose $MAIN_DB_SOCKETID}
+
+    if { [info exists PID_FILE] && [file exists $PID_FILE] } {
+        if [catch {file delete -force $PID_FILE} delError] {
+            puts " SGUILD: ERROR: $delError"
+        }
+    }
+
+    if { [info exists FORKD_PIDS] } {
+        puts "SGUILD: killing child procs..."
+
+        foreach PID $FORKD_PIDS {
+            kill $PID
+        }
+
+    }
+
+    puts "SGUILD: Exiting..."
+    if { $error } { 
+      exit 1
+    } else {
+      exit
+    }
+
+}
+
+#
+# CheckSguildConfLine- Parses CONF_FILE lines to make sure they are formatted
+#                   correctly (set varName value). Returns 1 if good.
+#
+proc CheckSguildConfLine { line } {
+  
+  set RETURN 1
+  # Right now we just check the length and for "set".
+  if { [llength $line] != 3 || [lindex $line 0] != "set" } { set RETURN 0 }
+  return $RETURN
+}   
+
+proc QuerydCmdRcvd { pipeID } {
+  if { [eof $pipeID] || [catch {gets $pipeID data}] } {
+    CleanExit
+  } else {
+    if [catch {SendSocket [lindex $data 0] [lrange $data 1 end]} tmpErr] { puts "$tmpErr" }
+  }
+}
+######################## END PROCS ##############################
+
+###################### MAIN #####################################
+
+set validSockets {}
+set validSensorSockets {}
+set clientList {}
+set LOGGER {}
+
+# Check to see if tcl was compiled w/threading enabled.
+# Fork and thread don't play nice together so we bail 
+# w/an error if threading was enabled
+if { [info exists ::tcl_platform(threaded)] } {
+    puts "ERROR: This version of tcl was compile with threading enabled.\
+          Sguil is NOT compatible with threading."
+    CleanExit 1
+}
+
+# Check for the existance of logger 
+foreach path [split $env(PATH) :] {
+    if { [file exists $path/logger] && [file executable $path/logger] } { set LOGGER $path/logger }
+}
+# Load mysql support.
+if [catch {package require mysqltcl} mysqltclVersion] {
+  puts "ERROR: The mysqltcl extension does NOT appear to be installed on this sysem."
+  puts "Download it at http://www.xdobry.de/mysqltcl/"
+  CleanExit 1
+}
+# Load extended tcl
+if [catch {package require Tclx} tclxVersion] {
+  puts "ERROR: The tclx extension does NOT appear to be installed on this sysem."
+  puts "Extended tcl (tclx) is available as a port/package for most linux and BSD systems."
+  CleanExit 1
+}
+# Load sha1 from tcllib
+if [catch {package require sha1} sha1Version] {
+  puts "ERROR: The sha1 package does NOT appear to be installed on this sysem."
+  puts "The sha1 package is part of the tcllib extension. A port/package is available for most linux and BSD systems."
+  CleanExit 1
+}
+# Load base64 from tcllib
+if [catch {package require base64} base64Version] {
+  puts "ERROR: The base64 package does NOT appear to be installed on this sysem."
+  puts "The base64 package is part of the tcllib extension. A port/package is available for most linux and BSD systems."
+  CleanExit 1
+}
+# reset the random
+random seed
+
+# GetOpts
+set state flag
+foreach arg $argv {
+  switch -- $state {
+    flag {
+      switch -glob -- $arg {
+        -- { set state flag }
+        -h { DisplayUsage $argv0}
+        -c { set state conf }
+        -a { set state autocat }
+        -g { set state gquery }
+        -u { set state users_file }
+        -D { set DAEMON_CONF_OVERRIDE 1 }
+        -P { set state pid_file }
+        -O { set state openssl }
+        -C { set state certs }
+        -A { set state accessfile }
+        -l { set state sguild_lib }
+        -d { set state debug_level }
+        -U { set state user }
+        -G { set state group }
+        -L { set state log_path }
+        -adduser { set state adduser }
+        -changepasswd { set state changepasswd }
+        -disableuser { set state disableuser }
+        default { DisplayUsage $argv0 }
+      }
+    }
+    sguild_lib { set TMP_SGUILD_LIB_PATH $arg; set state flag }
+    conf { set CONF_FILE $arg; set state flag }
+    autocat { set AUTOCAT_FILE $arg; set state flag }
+    gquery { set GLOBAL_QRY_FILE $arg; set state flag }
+    pid_file { set PID_FILE $arg; set state flag }
+    openssl { set TLS_PATH $arg; set state flag }
+    certs { set CERTS_PATH $arg; set state flag }
+    adduser { set ADDUSER 1; set userName $arg; set state flag }
+    changepasswd { set CHANGEPASSWD 1; set userName $arg; set state flag }
+    disableuser { set DISABLEUSER 1; set userName $arg; set state flag }
+    accessfile { set ACCESS_FILE $arg; set state flag }
+    debug_level { set DEBUG_OVERRIDE 1; set DEBUG_LEVEL $arg; set DEBUG $arg; set state flag }
+    user { set USER $arg; set state flag }
+    group { set GROUP $arg; set state flag }
+    log_path { set LOG_PATH $arg; set state flag }
+    default { DisplayUsage $argv0 }
+  }
+}
+
+##################################
+
+# Do all priv account actions here.
+# Open log files/etc. Privs will be dropped after.
+
+if { ![info exists LOG_PATH] } { set LOG_PATH /var/log/sguild }
+
+if { ![file exists $LOG_PATH] } {
+
+    if { [catch {file mkdir $LOG_PATH} dirError] } {
+
+        puts "ERROR: Unable to create log dir $LOG_PATH : $dirError"
+        CleanExit 1
+
+    }
+
+}
+
+# Create client access log
+set CLIENT_LOG "$LOG_PATH/user.log"
+if { [catch {open $CLIENT_LOG a} createError] } {
+
+    puts "ERROR: Unable to create $CLIENT_LOG : $createError"
+    CleanExit 1
+
+}
+catch {close $CLIENT_LOG}
+
+# Create agent access log
+set AGENT_LOG "$LOG_PATH/agent.log"
+if { [catch {open $AGENT_LOG a} createError] } {
+
+    puts "ERROR: Unable to create $AGENT_LOG : $createError"
+    CleanExit 1
+
+}
+catch {close $AGENT_LOG}
+
+# Change perms
+if { [info exists USER] } { 
+
+    # User log
+    if { [catch {chown $USER $CLIENT_LOG} tmpError] } {
+
+        puts "ERROR: Unable change owner to $USER for $CLIENT_LOG : $tmpError"
+        CleanExit 1
+
+    }
+
+    # Agent log
+    if { [catch {chown $USER $AGENT_LOG} tmpError] } {
+
+        puts "ERROR: Unable change owner to $USER for $AGENT_LOG : $tmpError"
+        CleanExit 1
+
+    }
+
+}
+
+if { [info exists GROUP] } { 
+
+    # User log
+    if { [catch {chgrp $GROUP $CLIENT_LOG} tmpError] } {
+
+        puts "ERROR: Unable change group to $USER for $CLIENT_LOG : $tmpError"
+        CleanExit 1
+
+    }
+
+    # Agent log
+    if { [catch {chgrp $GROUP $AGENT_LOG} tmpError] } {
+
+        puts "ERROR: Unable change group to $USER for $AGENT_LOG : $tmpError"
+        CleanExit 1
+
+    }
+
+}
+
+# OpenSSL is a requirement
+set VERSION "$VERSION OPENSSL ENABLED"
+set AGENT_VERSION "$AGENT_VERSION OPENSSL ENABLED"
+
+# Need a path to the tls libs
+if { [info exists TLS_PATH] } {
+
+    if [catch {load $TLS_PATH} tlsError] {
+
+        puts "ERROR: Unable to load tls libs ($TLS_PATH): $tlsError"
+        DisplayUsage $argv0
+
+    }
+
+}
+
+if { [catch {package require tls} tlsError] } {
+    puts "ERROR: The tcl tls package does NOT appear to be installed on this sysem."
+    puts "Please see http://tls.sourceforge.net/ for more info."
+    CleanExit 1
+}
+# Check for certs
+if {![info exists CERTS_PATH]} {
+
+    set CERTS_PATH /etc/sguild/certs
+
+}
+
+if {![file exists $CERTS_PATH] || ![file isdirectory $CERTS_PATH]} {
+
+    puts "ERROR: $CERTS_PATH does not exist or is not a directory"
+    DisplayUsage $argv0
+
+}
+
+# Need sguild.key and sguild.pem
+set PEM [file join $CERTS_PATH sguild.pem]
+set KEY [file join $CERTS_PATH sguild.key]
+if {![file exists $PEM] || ![file readable $PEM] } {
+
+    puts "ERROR: $PEM does not exist or is not readable"
+    DisplayUsage $argv0
+
+}
+
+if {![file exists $KEY] || ![file readable $KEY] } {
+
+    puts "ERROR: $KEY does not exist or is not readable"
+    DisplayUsage $argv0
+
+}
+
+if { ![info exists CONF_FILE] } {
+  # No conf file specified check the defaults
+  if { [file exists /etc/sguild/sguild.conf] } {
+    set CONF_FILE /etc/sguild/sguild.conf
+  } elseif { [file exists ./sguild.conf] } {
+    set CONF_FILE ./sguild.conf
+  } else {
+    puts "Couldn't determine where the sguil config file is"
+    puts "Looked for ./sguild.conf and /etc/sguild/sguild.conf."
+    DisplayUsage $argv0
+  }
+}
+set i 0
+if { [info exists CONF_FILE] } {
+  # Parse the config file. Currently the only option is to 
+  # create a variable using 'set varName value' 
+  for_file line $CONF_FILE {
+    incr i
+    if { ![regexp ^# $line] && ![regexp ^$ $line] } {
+      if { [CheckSguildConfLine $line] } {
+        if { [catch {eval $line} evalError] } {
+          puts "Error at line $i in $CONF_FILE: $line"
+          CleanExit
+        }
+      } else {
+        puts "Error at line $i in $CONF_FILE: $line"
+        CleanExit
+      }
+    }
+  }
+} else {
+  DisplayUsage $argv0
+}
+
+##################################
+# Drop privs
+
+# Group first
+if { [info exists GROUP] } { 
+
+    if { [catch {id group $GROUP} tmpError] } {
+
+        # Failed
+        puts "ERROR: Unable to change group privs to $GROUP : $tmpError"
+        CleanExit 1
+
+    }
+
+}
+
+# Then user
+if { [info exists USER] } { 
+
+    if { [catch {id user $USER} tmpError] } {
+
+        # Failed
+        puts "ERROR: Unable to change user privs to $USER : $tmpError"
+        CleanExit 1
+
+    }
+
+}
+
+# Set sensor aggregation to 1 if not specified
+if { ![info exists SENSOR_AGGREGATION_ON] } { set SENSOR_AGGREGATION_ON 1 }
+
+# If DEBUG was specified on the cmd line, we override the conf file here
+if { [info exists DEBUG_OVERRIDE] && [info exists DEBUG_LEVEL] } {
+    set DEBUG $DEBUG_LEVEL
+}
+
+# Source the libs
+set sourceLibs {
+    SguildAccess.tcl           \
+    SguildAutoCat.tcl          \
+    SguildClientCmdRcvd.tcl    \
+    SguildConnect.tcl          \
+    SguildCreateDB.tcl         \
+    SguildEmailEvent.tcl       \
+    SguildEvent.tcl            \
+    SguildGenericEvent.tcl     \
+    SguildGenericDB.tcl        \
+    SguildHealthChecks.tcl     \
+    SguildLoaderd.tcl          \
+    SguildPadsLib.tcl          \
+    SguildQueryd.tcl           \
+    SguildReportBuilder.tcl    \
+    SguildSendComms.tcl        \
+    SguildSensorAgentComms.tcl \
+    SguildSensorCmdRcvd.tcl    \
+    SguildTranscript.tcl       \
+    SguildUtils.tcl            \
+    SguildMysqlMerge.tcl       \
+}
+
+# Override config file if -l was specified on cmd line
+if { [info exists TMP_SGUILD_LIB_PATH] } {
+  set SGUILD_LIB_PATH $TMP_SGUILD_LIB_PATH
+}
+if { ![info exists SGUILD_LIB_PATH] } {
+  # set the lib path to local dir
+  set SGUILD_LIB_PATH ./lib
+}
+if { ![file exists $SGUILD_LIB_PATH] } {
+  # Specified lib path doesn't exist
+  puts "ERROR: Cannot find libraries in $SGUILD_LIB_PATH"
+  CleanExit
+}
+foreach sguildLib $sourceLibs {
+  if { [file exists $SGUILD_LIB_PATH/$sguildLib] } {
+    source $SGUILD_LIB_PATH/$sguildLib
+  } else {
+    puts "ERROR: Missing library: $SGUILD_LIB_PATH/$sguildLib"
+    CleanExit
+  }
+}
+
+# Called in to add a user only
+if { [info exists ADDUSER] && $ADDUSER } {
+  AddUser $userName
+  CleanExit
+}
+# Called in to change a users passwd.
+if { [info exists CHANGEPASSWD] && $CHANGEPASSWD} {
+  ChangeUserPW $userName
+  CleanExit
+}
+# Called in to disable a user account
+if { [info exists DISABLEUSER] && $DISABLEUSER} {
+  DisableUser $userName
+  CleanExit
+}
+# Load accessfile
+if { ![info exists ACCESS_FILE] } {
+  # Check the defaults
+  if { [file exists /etc/sguild/sguild.access] } {
+    set ACCESS_FILE "/etc/sguild/sguild.access"
+  } elseif { [file exists ./sguild.access] } {
+    set ACCESS_FILE "./sguild.access"
+  } else {
+    set DEBUG 2
+    LogMessage "ERROR: No sguild.access file found."
+    DisplayUsage $argv0   
+  }
+}
+if { [file exists $ACCESS_FILE] } {
+  LoadAccessFile $ACCESS_FILE
+}
+# Auto cat moved to the DB
+# Load auto cat config
+#if { ![info exists AUTOCAT_FILE] } {
+#   if { [file exists /etc/sguild/autocat.conf] } {
+#     set AUTOCAT_FILE "/etc/sguild/autocat.conf"
+#   } else {
+#     set AUTOCAT_FILE "./autocat.conf"
+#   }
+#}
+#if { [file exists $AUTOCAT_FILE] } {
+#  LoadAutoCatFile $AUTOCAT_FILE
+#}
+# Load email config file
+if { ![info exists EMAIL_FILE] } {
+  if { [file exists /etc/sguild/sguild.email] } {
+    set EMAIL_FILE "/etc/sguild/sguild.email"
+  } else {
+    set EMAIL_FILE "./sguild.email"
+  }
+}
+if { [file exists $EMAIL_FILE] } {
+  LoadEmailConfig $EMAIL_FILE  
+} else {
+  set EMAIL_EVENTS 0
+}
+# Load global queries.
+if { ![info exists GLOBAL_QRY_FILE] } {
+  if { [file exists /etc/sguild/sguild.queries] } {
+    set GLOBAL_QRY_FILE "/etc/sguild/sguild.queries"
+  } else {
+    set GLOBAL_QRY_FILE "./sguild.queries"
+  }
+}
+if { [file exists $GLOBAL_QRY_FILE] } {
+  LoadGlobalQueries $GLOBAL_QRY_FILE
+} else {
+  set GLOBAL_QRY_LIST none
+}
+# Load report queries.
+if { ![info exists REPORT_QRY_FILE] } {
+  if { [file exists /etc/sguild/sguild.reports] } {
+    set REPORT_QRY_FILE "/etc/sguild/sguild.reports"
+  } else {
+    set REPORT_QRY_FILE "./sguild.reports"
+  }
+}
+if { [file exists $REPORT_QRY_FILE] } {
+  LoadReportQueries $REPORT_QRY_FILE
+} else {
+  set REPORT_QRY_LIST none
+}
+
+# Deamon
+if {[info exists DAEMON_CONF_OVERRIDE] && $DAEMON_CONF_OVERRIDE} { set DAEMON 1}
+if {$DAEMON} { Daemonize }
+
+# Check and initialize the DB
+if { $DBPASS == "" } {
+  set connectCmd "-host $DBHOST -user $DBUSER -port $DBPORT"
+} else {
+  set connectCmd "-host $DBHOST -user $DBUSER -port $DBPORT -password $DBPASS"
+}
+LogMessage "Connecting to $DBHOST on $DBPORT as $DBUSER"
+if [catch {eval mysqlconnect $connectCmd} MAIN_DB_SOCKETID] {
+  LogMessage "ERROR: Unable to connect to $DBHOST on $DBPORT: Make sure mysql is running."
+  ErrorMessage "$MAIN_DB_SOCKETID"
+}
+# DB Version
+set MYSQL_VERSION [FlatDBQuery "SHOW VARIABLES LIKE 'version'"]
+LogMessage "MySQL Version: $MYSQL_VERSION"
+
+# See if the DB we want to use exists
+if { [catch {mysqluse $MAIN_DB_SOCKETID $DBNAME} noDBError] } {
+  LogMessage "Error: $noDBError"
+  # Create the DB or die.
+  if {![CreateDB $DBNAME]} { CleanExit }
+}
+# Make sure we have a compatible DB version
+set currentDBVer [FlatDBQuery "SELECT version FROM version"]
+LogMessage "SguilDB Version: $currentDBVer"
+
+if { [lsearch $DB_VERSION $currentDBVer] < 0 } {
+  ErrorMessage "ERROR: Incompatable DB schema. Required Version: $DB_VERSION \
+    Installed Version: $currentDBVer Check the server/sql_scripts directory of \
+    the src that came with sguild for scripts to help you upgrade"
+}
+
+# Load the autocats from the DB
+LoadAutoCats
+
+# Init Mysql Merge tables
+if [ catch {InitializeMysqlMergeTables} tmpError ] {
+
+    ErrorMessage $tmpError
+
+}
+
+# End DB checks
+
+# Fork a child to load PS/SSN info
+set childPid [ForkLoader]
+if { $childPid == 0 } { vwait LOADER }
+lappend FORKD_PIDS $childPid
+
+# Fork a child to handle queries
+set childPid [ForkQueryd]
+if { $childPid == 0 } { vwait QUERYD }
+lappend FORKD_PIDS $childPid
+
+fileevent $mainReadPipe readable [list QuerydCmdRcvd $mainReadPipe]
+fconfigure $mainReadPipe -buffering line
+
+# If emailing of events is enabled, we need to make sure the libs are installed.
+if { [info exists EMAIL_EVENTS] && $EMAIL_EVENTS } {
+
+    # Load tcllib mime
+    if [catch {package require mime} mimeVersion] {
+
+        puts "ERROR: The tcllib mime extension does NOT appear to be installed on this sysem."
+        puts "Tcllib mime is required when enabling the email events function. Please"
+        puts "download it at http://tcllib.sourceforge.net or disable the emailing of events"
+        puts "in your sguild.email."
+        CleanExit 1
+
+    }
+
+    # Load tcllib mime
+    if [catch {package require smtp 1.4.3} smtpVersion] {
+
+        puts "ERROR: The tcllib smtp extension version 1.4.3 or greater does NOT appear"
+        puts "to be installed on this sysem. Tcllib smtp is required when enabling the"
+        puts "email events function. Please download it at http://tcllib.sourceforge.net"
+        puts "or disable the emailing of events in your sguild.email. A patch for smtp"
+        puts "vesion 1.4.2 (shipped with tcllib-1.9) is available at:"
+        puts "http://tcllib.cvs.sourceforge.net/tcllib/tcllib/modules/mime/smtp.tcl?r1=1.44&r2=1.45&view=patch"
+        puts ""
+        puts "tclError: $smtpVersion"
+        CleanExit 1
+
+    }
+
+    package require smtp
+
+    # Make sure our vars are initialized
+    if { ![info exists EMAIL_CLASSES] } { set EMAIL_CLASSES "0" }
+    if { ![info exists EMAIL_PRIORITIES] } { set EMAIL_PRIORITIES "0" }
+    if { ![info exists EMAIL_DISABLE_SIDS] } { set EMAIL_DISABLE_SIDS "0" }
+    if { ![info exists EMAIL_ENABLE_SIDS] } { set EMAIL_ENABLE_SIDS "0" }
+} else {
+    # Just in case the var doesn't get set in sguild.conf
+    set EMAIL_EVENTS 0
+}
+
+# Set the AUTOID before we get events.
+set AUTOID [GetUserID auto]
+# Initialize some vars
+set eventIDList ""
+
+LogMessage "Retrieving DB info..." 
+
+set sensorQuery "SELECT sid, net_name, hostname, agent_type FROM sensor WHERE active='Y' ORDER BY net_name, sid ASC"
+LogMessage "  $sensorQuery"
+set agentList [MysqlSelect $sensorQuery]
+
+# Build the sensor status array
+foreach agentSidType $agentList {
+
+    set sid [lindex $agentSidType 0]
+    set net_name [lindex $agentSidType 1]
+    set hostname [lindex $agentSidType 2]
+    set agent_type [lindex $agentSidType 3]
+
+    # Get the time of the last alert or load 
+    # If the type is not pads or sancp then we assume it is 
+    # an alert of some type and should be in the event table
+    if { $agent_type != "pads" && $agent_type != "sancp" } {
+
+        # Make sure the event table has built
+        if { $mergeTableListArray(event) != "" } {
+
+            set tmpQuery "SELECT MAX(timestamp) FROM event WHERE sid=$sid"
+
+        } else { 
+
+            set tmpQuery "N/A"
+
+        }
+
+        if { $agent_type == "snort" } {
+
+            # Init snort stats array
+            set snortStatsArray($hostname) [list $sid N/A N/A N/A N/A N/A N/A N/A N/A N/A N/A]
+
+        }
+
+    } elseif { $agent_type == "pads" } {
+
+        set tmpQuery "SELECT MAX(timestamp) FROM pads WHERE sid=$sid"
+
+    } elseif { $agent_type == "sancp" } {
+
+        if { $mergeTableListArray(sancp) != "" } {
+
+            set tmpQuery "N/A"
+            #set tmpQuery "SELECT MAX(start_time) FROM sancp WHERE sid=$sid"
+
+        } else {
+
+            set tmpQuery "N/A"
+
+        }
+
+    } else {
+
+        set tmpQuery "N/A"
+
+    }
+
+    if { $tmpQuery == "N/A" } {
+
+        set last $tmpQuery
+
+    } else {
+
+        LogMessage "  $tmpQuery"
+        set last [lindex [MysqlSelect $tmpQuery flatlist] 0]
+
+    }
+
+    # agentStatusList(sid) net_name hostname agent_type last status
+    set agentStatusList($sid) [list $net_name $hostname $agent_type $last 0]
+
+}
+
+if { $mergeTableListArray(event) != "" } {
+
+    # Get the archived alerts
+    LogMessage "Querying DB for archived events..."
+    set MAJOR_MYSQL_VERSION [lindex [split [lindex $MYSQL_VERSION 1] .] 0]
+    if { $MAJOR_MYSQL_VERSION > 3 } {
+
+        set tmpQry "SELECT event.status, event.priority, event.class, sensor.hostname,       \n\
+                    event.timestamp, event.sid, event.cid, event.signature,                  \n\
+                    INET_NTOA(event.src_ip), INET_NTOA(event.dst_ip), event.ip_proto,        \n\
+                    event.src_port, event.dst_port, event.signature_gen, event.signature_id, \n\
+                    event.signature_rev, event.unified_event_id, unified_event_ref           \n\
+                    FROM event                                                               \n\
+                    FORCE INDEX (status)                                                     \n\
+                    JOIN sensor ON event.sid=sensor.sid                                      \n\
+                    WHERE event.status=0 ORDER BY event.timestamp ASC"
+
+    } else {
+
+        set tmpQry "SELECT event.status, event.priority, event.class, sensor.hostname,       \n\
+                    event.timestamp, event.sid, event.cid, event.signature,                  \n\
+                    INET_NTOA(event.src_ip), INET_NTOA(event.dst_ip), event.ip_proto,        \n\
+                    event.src_port, event.dst_port, event.signature_gen, event.signature_id, \n\
+                    event.signature_rev, event.unified_event_id, unified_event_ref           \n\
+                    FROM event, sensor                                                       \n\
+                    WHERE event.sid=sensor.sid AND event.status=0                            \n\
+                    ORDER BY event.timestamp ASC"
+
+    }
+
+    InfoMessage "$tmpQry"
+
+    foreach row [mysqlsel $MAIN_DB_SOCKETID $tmpQry -list] {
+  
+        InfoMessage "Archived Alert: $row"
+        set LAST_EVENT_ID([lindex $row 3]) "[lindex $row 5].[lindex $row 6]"
+
+        if { ![array exists acRules] || ![AutoCat $row] } {
+
+            set matchAID [CorrelateEvent [lindex $row 5] [lindex $row 8] [lindex $row 7] [lindex $row 15] [lindex $row 16]]
+
+            if { $matchAID == 0 } {
+
+                AddEventToEventArray $row
+
+            } else {
+
+                # Add event to parents list
+                lappend correlatedEventArray($matchAID) $row
+                lappend correlatedEventIDArray($matchAID) [lindex $row 13]
+                # Bump the parents count
+                incr eventIDCountArray($matchAID)
+
+            }
+
+        }
+
+    }
+
+    LogMessage "Querying DB for escalated events..."
+    if { $MAJOR_MYSQL_VERSION > 3 } {
+
+        set tmpQry "SELECT event.status, event.priority, event.class, sensor.hostname,      \n\
+                    event.timestamp, event.sid, event.cid, event.signature,                 \n\
+                    INET_NTOA(event.src_ip), INET_NTOA(event.dst_ip), event.ip_proto,       \n\
+                    event.src_port, event.dst_port, event.signature_gen,                    \n\
+                    event.signature_id, event.signature_rev                                 \n\
+                    FROM event                                                              \n\
+                    FORCE INDEX (status)                                                    \n\
+                    JOIN sensor ON event.sid=sensor.sid                                     \n\
+                    WHERE event.sid=sensor.sid AND event.status=2 ORDER BY event.timestamp ASC"
+
+    } else {
+
+        set tmpQry "SELECT event.status, event.priority, event.class, sensor.hostname,      \n\
+                    event.timestamp, event.sid, event.cid, event.signature,                 \n\
+                    INET_NTOA(event.src_ip), INET_NTOA(event.dst_ip), event.ip_proto,       \n\
+                    event.src_port, event.dst_port, event.signature_gen,                    \n\
+                    event.signature_id, event.signature_rev                                 \n\
+                    FROM event                                                              \n\
+                    JOIN sensor ON event.sid=sensor.sid                                     \n\
+                    WHERE event.sid=sensor.sid AND event.status=2 ORDER BY event.timestamp ASC"
+
+    }
+
+    InfoMessage $tmpQry
+
+    foreach row [mysqlsel $MAIN_DB_SOCKETID $tmpQry -list] {
+    
+        InfoMessage "Escalated Event: $row"
+        set escalatedEventID "[lindex $row 5].[lindex $row 6]"
+        lappend escalateIDList $escalatedEventID
+        set escalateArray($escalatedEventID) $row
+    }
+
+} else {
+
+    LogMessage "Warning: Event table appears to be empty."
+    LogMessage "If this is a new DB, then you can safely ignore this warning."
+
+}
+
+# Get DB info (table names and column info)
+LogMessage "Retrieving DB info..." 
+LogMessage "  Getting a list of tables."
+set tableNameList [mysqlinfo $MAIN_DB_SOCKETID tables]
+# Clean up the PiMPDB tables
+regsub -all {event_\S+\s} $tableNameList {} tableNameList
+regsub -all {tcphdr_\S+\s} $tableNameList {} tableNameList
+regsub -all {udphdr_\S+\s} $tableNameList {} tableNameList
+regsub -all {icmphdr_\S+\s} $tableNameList {} tableNameList
+regsub -all {data_\S+\s} $tableNameList {} tableNameList
+regsub -all {sancp_\S+\s} $tableNameList {} tableNameList
+foreach tableName $tableNameList {
+  LogMessage "  ...Getting info on $tableName."
+  set tableArray($tableName) [mysqlcol $MAIN_DB_SOCKETID $tableName {name type length}]
+}
+
+set sensorQuery "SELECT DISTINCT(net_name) FROM sensor WHERE active='Y'"
+set sensorList [FlatDBQuery $sensorQuery]
+
+# Build a map of net names and sids
+set tmpQuery "SELECT net_name, sid FROM sensor"
+set netList [MysqlSelect $tmpQuery]
+foreach net $netList {
+    set netName [lindex $net 0]
+    set sid [lindex $net 1]
+    set sidNetNameMap($sid) $netName
+}
+
+# Open a socket for clients to connect to
+if { [info exists BIND_CLIENT_IP_ADDR] && $BIND_CLIENT_IP_ADDR != "" } {
+  set clientSocketCmd "socket -server ClientConnect -myaddr $BIND_CLIENT_IP_ADDR $SERVERPORT"
+} else {
+  set clientSocketCmd "socket -server ClientConnect $SERVERPORT"
+}
+if [catch {eval $clientSocketCmd} serverSocket] {
+  ErrorMessage "ERROR: Couldn't open client socket: $serverSocket"
+}
+# Open a socket for sensors to connect to
+if { [info exists BIND_SENSOR_IP_ADDR] && $BIND_SENSOR_IP_ADDR != "" } {
+  set sensorSocketCmd "socket -server SensorConnect -myaddr $BIND_SENSOR_IP_ADDR $SENSORPORT"
+} else {
+  set sensorSocketCmd "socket -server SensorConnect $SENSORPORT"
+}
+if [catch {eval $sensorSocketCmd} sensorSocket] {
+  ErrorMessage "ERROR: Couldn't open sensor socket: $sensorSocket"
+}
+LogMessage "Sguild Initialized."
+
+signal trap {HUP} HupTrapped
+signal trap {QUIT TERM} CleanExit
+
+# Start the health check for sensoragents
+after 10000 SensorAgentsHealthCheck
+
+# Infinite wait
+vwait FOREVER
